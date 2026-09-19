@@ -12,7 +12,7 @@ from sqlalchemy import select
 from app.config import settings
 from app.database import SessionLocal
 from app.models import User
-from app.security import hash_password
+from app.security import hash_password_async
 from app.utils.logger import logger
 
 
@@ -36,7 +36,7 @@ async def ensure_admin_exists() -> None:
         # 不存在:创建管理员(密码加密后存储,日志里绝不打印密码)
         admin = User(
             username=settings.admin_username,
-            password_hash=hash_password(settings.admin_password),
+            password_hash=await hash_password_async(settings.admin_password),
             role="admin",
         )
         db.add(admin)

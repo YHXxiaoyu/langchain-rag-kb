@@ -22,7 +22,11 @@ from app.schemas import (
     RegisterRequest,
     UserOut,
 )
-from app.security import create_access_token, hash_password, verify_password
+from app.security import (
+    create_access_token,
+    hash_password_async,
+    verify_password_async,
+)
 from app.utils.logger import logger
 
 router = APIRouter(prefix="/api/auth", tags=["用户"])
@@ -39,10 +43,10 @@ async def register(req: RegisterRequest, db: AsyncSession = Depends(get_db)):
     if await get_user_by_username(db, req.username):
         raise HTTPException(status_code=400, detail="该用户名已被注册,换一个试试")
 
-    # 2. 建用户:密码加密后保存
+    # 2. 建用户:密码加密后保存(用异步版,避免加密计算卡住其它请求)
     user = User(
         username=req.username,
-        password_hash=hash_password(req.password),
+        password_hash=await hash_password_async(req.password),
         role="user",
     )
     db.add(user)
@@ -62,7 +66,7 @@ async def login(req: LoginRequest, db: AsyncSession = Depends(get_db)):
     注意:用户名不存在和密码错误返回同一句提示,不给攻击者"猜用户名"的机会。
     """
     user = await get_user_by_username(db, req.username)
-    if user is None or not verify_password(req.password, user.password_hash):
+    if user is None or not await verify_password_async(req.password, user.password_hash):
         raise HTTPException(status_code=401, detail="用户名或密码错误")
 
     token = create_access_token(user.id, user.username, user.role)
@@ -89,7 +93,7 @@ async def change_password(
     修改密码:必须先验证旧密码,防止"有人趁你没锁屏幕偷偷改密"。
     """
     # 1. 验证旧密码
-    if not verify_password(req.old_password, user.password_hash):
+    if not await verify_password_async(req.old_password, user.password_hash):
         raise HTTPException(status_code=400, detail="当前密码不正确")
 
     # 2. 新旧密码不能一样(不然等于没改)
@@ -97,7 +101,7 @@ async def change_password(
         raise HTTPException(status_code=400, detail="新密码不能与当前密码相同")
 
     # 3. 更新为新密码的哈希
-    user.password_hash = hash_password(req.new_password)
+    user.password_hash = await hash_password_async(req.new_password)
     await db.commit()
     logger.info(f"用户修改密码: {user.username}")
     return MessageOut(message="密码修改成功,请用新密码重新登录")
