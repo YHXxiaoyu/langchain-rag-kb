@@ -1,0 +1,40 @@
+# ===== 敏感信息(绝对不能上传)=====
+.env
+*.env
+!.env.example
+
+# ===== 运行时数据(用户数据,不进版本库)=====
+data/*
+!data/.gitkeep
+
+# ===== Python =====
+backend/venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.coverage
+
+# ===== Node / 前端 =====
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# ===== TypeScript 编译缓存 =====
+*.tsbuildinfo
+
+# ===== Claude Code 本地设置 =====
+.claude/settings.local.json
+
+# ===== 个人文档(只存本机,不随项目上传)=====
+docs/*演示指南.md
+
+# ===== 日志 =====
+logs/
+*.log
+
+# ===== 编辑器/系统 =====
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini

@@ -1,0 +1,169 @@
+/* 全局基础样式:重置默认边距,让页面铺满整个窗口 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+    'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  background: #f5f7fa;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ============================================================
+   CSS 变量:浅色 / 深色两套配色
+   小白理解:把颜色起个"别名"(比如 --bg-chat = 聊天区背景),
+   页面里统一用别名。想换深色时,只要在下面 body.dark 里
+   把别名重新指一遍,整个页面就自动换装了,不用一个个改。
+   ============================================================ */
+:root {
+  --bg-page: #f5f7fa;
+  --bg-chat: #ffffff;
+  --bg-sidebar: #fafafa;
+  --bg-bubble-ai: #ffffff;
+  --bg-cite-area: #fafafa;
+  --bg-cite-item: #ffffff;
+  --border-soft: #f0f0f0;
+  --text-body: #262626;
+  --cite-bg: #e6f4ff;
+  --cite-color: #1677ff;
+}
+
+body.dark {
+  --bg-page: #0f0f0f;
+  --bg-chat: #141414;
+  --bg-sidebar: #1a1a1a;
+  --bg-bubble-ai: #1f1f1f;
+  --bg-cite-area: #1a1a1a;
+  --bg-cite-item: #262626;
+  --border-soft: #303030;
+  --text-body: #e6e6e6;
+  --cite-bg: #111d2c;
+  --cite-color: #4096ff;
+}
+
+/* ===== AI 回答的 Markdown 排版 ===== */
+.markdown-body {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text-body);
+  word-break: break-word;
+}
+
+.markdown-body p {
+  margin-bottom: 8px;
+}
+
+.markdown-body p:last-child {
+  margin-bottom: 0;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+  padding-left: 22px;
+  margin-bottom: 8px;
+}
+
+.markdown-body li {
+  margin-bottom: 4px;
+}
+
+/* 以下都用"半透明灰",这样浅色深色模式下都好看,不用各写一套 */
+.markdown-body code {
+  background: rgba(127, 127, 127, 0.15);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.markdown-body pre {
+  background: rgba(127, 127, 127, 0.1);
+  padding: 12px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin-bottom: 8px;
+}
+
+.markdown-body blockquote {
+  border-left: 3px solid rgba(127, 127, 127, 0.4);
+  padding-left: 12px;
+  color: rgba(127, 127, 127, 1);
+  margin-bottom: 8px;
+}
+
+.markdown-body table {
+  border-collapse: collapse;
+  margin-bottom: 8px;
+}
+
+.markdown-body th,
+.markdown-body td {
+  border: 1px solid rgba(127, 127, 127, 0.25);
+  padding: 6px 12px;
+}
+
+.markdown-body th {
+  background: rgba(127, 127, 127, 0.08);
+}
+
+/* ===== 回答里的引用标记 [1] [2]:做成可点的蓝色小标签 ===== */
+.cite-ref {
+  display: inline-block;
+  background: #e6f4ff;
+  color: #1677ff;
+  border-radius: 4px;
+  padding: 0 5px;
+  margin: 0 2px;
+  font-size: 12px;
+  line-height: 18px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.cite-ref:hover {
+  background: #bae0ff;
+}
+
+/* ===== 流式输出时的闪烁光标 ===== */
+.streaming-cursor {
+  color: #1677ff;
+  animation: blink 0.9s step-end infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* ===== 登录页背景(明暗两套渐变) ===== */
+.login-page {
+  background: linear-gradient(135deg, #e6f4ff 0%, #f5f7fa 50%, #f0f5ff 100%);
+}
+
+body.dark .login-page {
+  background: linear-gradient(135deg, #0d1a2b 0%, #0f0f0f 50%, #101828 100%);
+}
+
+/* ===== 滚动条美化(可选) ===== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d9d9d9;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #bfbfbf;
+}

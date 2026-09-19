@@ -1,0 +1,46 @@
+# ============================================================
+# 小鱼 RAG 知识库问答系统 — 后端依赖清单
+# 安装方式:venv/Scripts/python.exe -m pip install -r requirements.txt
+# ============================================================
+
+# --- Web 框架:提供 HTTP 接口、流式输出 ---
+fastapi
+uvicorn[standard]
+python-multipart
+
+# --- 数据库:SQLAlchemy 2.x 异步模式 + SQLite 异步驱动 ---
+sqlalchemy[asyncio]
+aiosqlite
+
+# --- 配置管理:从 .env 读取配置 ---
+pydantic
+pydantic-settings
+python-dotenv
+
+# --- LangChain 生态:RAG 流水线的核心框架 ---
+langchain
+langchain-core
+langchain-community
+langchain-openai
+langchain-chroma
+chromadb
+
+# --- 文档解析:PDF / Word / Excel ---
+pymupdf
+python-docx
+openpyxl
+
+# --- 检索:BM25 关键词检索 + 中文分词 ---
+rank-bm25
+jieba
+numpy
+
+# --- 安全:密码哈希 + JWT 令牌 ---
+bcrypt
+pyjwt
+
+# --- 工具:HTTP 客户端 / 日志 / 限流 / 重试 ---
+httpx
+loguru
+slowapi
+tenacity
