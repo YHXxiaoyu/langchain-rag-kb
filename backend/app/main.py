@@ -42,6 +42,14 @@ async def lifespan(app: FastAPI):
 
     logger.info(f"   大模型: {settings.llm_model} | 向量模型: {settings.embedding_model}")
     logger.info(f"   接口文档: http://127.0.0.1:8000/docs")
+
+    # 模拟模式是一条容易忘记关的开关 —— 启动时大字提醒,避免"以为在用真 AI"
+    if settings.mock_llm:
+        logger.warning("=" * 60)
+        logger.warning("⚠️  模拟模式已开启:AI 回答、向量化、重排序全部由本地模拟器代替")
+        logger.warning("    不联网、不花钱,仅用于压力测试或断网演示")
+        logger.warning("    恢复正常使用:去掉 .env 里的 MOCK_LLM=1 后重启")
+        logger.warning("=" * 60)
     yield
 
     # 关闭时:叫停后台工人,避免残留任务

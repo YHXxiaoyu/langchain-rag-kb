@@ -68,6 +68,12 @@ class Settings(BaseSettings):
     cache_ttl_seconds: int = 3600  # 问答缓存有效期(秒)
     chat_rate_limit: str = "20/minute"  # 每个用户每分钟最多提问次数
 
+    # ---------- 模拟模式(压力测试 / 断网演示用) ----------
+    # 开启后,所有 AI 能力(对话、向量化、重排序)由本地模拟器接管:
+    # 不联网、不花钱,但请求会完整走完整个流程,适合做并发压力测试。
+    # 正常使用时保持关闭(在 .env 里写 MOCK_LLM=1 才会开启)。
+    mock_llm: bool = False
+
     # ---------- 兼容属性 ----------
     @property
     def allowed_ext_list(self) -> list[str]:

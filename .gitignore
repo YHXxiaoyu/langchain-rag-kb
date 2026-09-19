@@ -29,6 +29,9 @@ frontend/.vite/
 # ===== 个人文档(只存本机,不随项目上传)=====
 docs/*演示指南.md
 
+# ===== 压测临时数据(含登录令牌,可随时用 prepare.py 重新生成)=====
+backend/tools/stress/accounts.json
+
 # ===== 日志 =====
 logs/
 *.log

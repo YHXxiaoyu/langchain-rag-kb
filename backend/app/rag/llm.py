@@ -10,6 +10,10 @@ AI 模型封装(连接阿里云百炼的三个模型)
 
 为什么要包一层?因为以后想把模型换成别的(比如 qwen-max),只改这一个文件,
 其他代码完全不用动。
+
+【模拟模式】当配置项 mock_llm 为真(在 .env 里写 MOCK_LLM=1)时,三位"AI 员工"
+会换成不联网的本地模拟器(见 app/rag/mock.py)—— 用于压力测试和断网演示。
+除此之外一切照旧,请求仍会完整走完整个业务流程。
 """
 from functools import lru_cache
 
@@ -17,6 +21,7 @@ import httpx
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 
 from app.config import settings
+from app.rag.mock import MockChatModel, MockEmbeddings, mock_rerank
 
 
 @lru_cache(maxsize=4)
@@ -31,7 +36,12 @@ def get_llm(temperature: float | None = None, streaming: bool = False) -> ChatOp
 
     说明:通过"OpenAI 兼容接口"调用通义千问 —— 阿里云官方支持这种调用方式,
     好处是能用上 LangChain 成熟的封装,流式输出最稳定。
+
+    模拟模式下返回本地模拟器(不联网,压力测试用)。
     """
+    if settings.mock_llm:
+        return MockChatModel(temperature=temperature, streaming=streaming)
+
     return ChatOpenAI(
         model=settings.llm_model,
         api_key=settings.dashscope_api_key,
@@ -55,7 +65,12 @@ def get_embeddings() -> OpenAIEmbeddings:
     关键参数 check_embedding_ctx_length=False:
       默认情况下,LangChain 会先把文字转成 token 编号再发出去(这是 OpenAI 的老规矩);
       但阿里云的接口只认原文字,不认编号。关掉它才能正常调用 —— 踩过这个坑。
+
+    模拟模式下返回本地模拟器(不联网,压力测试用)。
     """
+    if settings.mock_llm:
+        return MockEmbeddings()
+
     return OpenAIEmbeddings(
         model=settings.embedding_model,
         api_key=settings.dashscope_api_key,
@@ -83,9 +98,14 @@ async def rerank_documents(query: str, documents: list[str], top_n: int) -> list
     重排序则是"老师傅挑鱼"——逐条仔细看,把真正对口的排到最前面。
 
     返回格式:[{"index": 原始位置, "relevance_score": 相关度分数}, ...]
+
+    模拟模式下返回本地模拟结果(不联网,压力测试用)。
     """
     if not documents:
         return []
+
+    if settings.mock_llm:
+        return await mock_rerank(query, documents, top_n)
 
     payload = {
         "model": settings.rerank_model,
